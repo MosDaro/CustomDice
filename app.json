@@ -1,0 +1,12 @@
+{
+  "name": "Exercise-Dice",
+  "displayName": "Exercise-Dice",
+  "expo": {
+    "name": "Exercise-Dice",
+    "slug": "Exercise-Dice",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  }
+}
