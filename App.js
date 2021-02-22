@@ -1,21 +1,33 @@
-import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useState, useContext, Component } from "react";
+import { SafeAreaView } from "react-native";
+import LandingPage from "./src/components/LandingPage";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import globalStyles from "./src/globalStyles";
+import { Context } from "./src/context/Provider";
 
-export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
+import DiceSet from "./src/components/DiceSet";
+
+class App extends Component {
+  static contextType = Context;
+
+  render() {
+    const { appContainer } = globalStyles;
+
+    const currentPage = () => {
+      switch (this.context.state.page) {
+        case "diceSet":
+          return <DiceSet />;
+        default:
+          return <LandingPage />;
+      }
+    };
+
+    return (
+      <SafeAreaProvider>
+        <SafeAreaView style={appContainer}>{currentPage()}</SafeAreaView>
+      </SafeAreaProvider>
+    );
+  }
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default App;
