@@ -17,7 +17,11 @@ export default function LandingPage() {
   } = globalStyles;
   const context = useContext(Context);
   const [randValue, setRandValue] = useState();
-  const [rgb, setRgb] = useState([255, 0, 0]);
+  const [rgb, setRgb] = useState([
+    Math.round(Math.random() * 255),
+    Math.round(Math.random() * 255),
+    Math.round(Math.random() * 255),
+  ]);
   const { options } = context.state;
   const dropDownRef = useRef();
 
@@ -52,11 +56,11 @@ export default function LandingPage() {
   };
 
   const getRandomColor = () => {
-    const color = [255, 0, 0];
-    color[0] = Math.round(Math.random() * 255);
-    color[1] = Math.round(Math.random() * 255);
-    color[2] = Math.round(Math.random() * 255);
-    setRgb(color);
+    setRgb([
+      Math.round(Math.random() * 255),
+      Math.round(Math.random() * 255),
+      Math.round(Math.random() * 255),
+    ]);
   };
 
   return (

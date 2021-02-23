@@ -1,4 +1,4 @@
-import { StyleSheet, Dimensions } from "react-native";
+import { StyleSheet, Dimensions, Platform } from "react-native";
 
 function globalStyles() {
   const windowHeight = Dimensions.get("window").height;
@@ -7,13 +7,14 @@ function globalStyles() {
     windowHeight,
     windowWidth,
     buttonsStyle: {
-      width: windowWidth * 0.5,
+      width: windowWidth * 0.6,
       height: windowHeight * 0.1,
     },
     buttonsTitle: {
       fontSize: 30,
     },
     appContainer: {
+      marginTop: Platform.OS === "android" ? "10%" : 0,
       flex: 1,
       backgroundColor: "#fff",
       alignItems: "center",
@@ -26,7 +27,7 @@ function globalStyles() {
       flex: 1,
       alignItems: "center",
       justifyContent: "flex-end",
-      marginBottom: "5%",
+      marginBottom: Platform.OS === "android" ? 0 : "5%",
     },
   });
 
