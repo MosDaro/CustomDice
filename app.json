@@ -1,12 +1,14 @@
 {
-  "name": "Exercise-Dice",
-  "displayName": "Exercise-Dice",
+  "name": "CustomDice",
+  "displayName": "CustomDice",
   "expo": {
-    "name": "Exercise-Dice",
-    "slug": "Exercise-Dice",
+    "name": "CustomDice",
+    "slug": "CustomDice",
     "version": "1.0.0",
     "assetBundlePatterns": [
       "**/*"
-    ]
+    ],
+    "description": "Custom dice with random roll",
+    "githubUrl": "https://github.com/MosDaro/CustomDice"
   }
 }
