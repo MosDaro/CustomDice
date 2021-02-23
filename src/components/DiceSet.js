@@ -4,14 +4,18 @@ import { Button, Input, Text, Icon } from "react-native-elements";
 import { Formik } from "formik";
 import AsyncStorage from "@react-native-community/async-storage";
 import { Context } from "../context/Provider";
+import * as Yup from "yup";
 
 import globalStyles from "../globalStyles";
 
-export default function DiceSet() {
+export default function DiceSet(props) {
   const context = useContext(Context);
   const { options } = context.state;
+  const { dropdownPick } = props;
   const [fields, setFields] = useState(
-    options?.length ? Object.values(JSON.parse(options)) : [""]
+    options[dropdownPick]?.length
+      ? Object.values(JSON.parse(options[dropdownPick]))
+      : [""]
   );
 
   // clearAll = async () => {
@@ -30,6 +34,7 @@ export default function DiceSet() {
       ...fields.filter(el => {
         if (el) return el;
       }),
+      name: dropdownPick !== "new" && dropdownPick ? dropdownPick : "",
     };
   };
 
@@ -48,13 +53,14 @@ export default function DiceSet() {
 
   const handleSave = async vals => {
     try {
-      Object.keys(vals).forEach(
-        k => !vals[k] && vals[k] !== undefined && delete vals[k]
+      const { name, ...rest } = vals;
+      Object.keys(rest).forEach(
+        k => !rest[k] && rest[k] !== undefined && delete rest[k]
       );
 
-      await AsyncStorage.setItem("@storage_Key", JSON.stringify(vals));
-      context.setOptions(JSON.stringify(vals));
-      context.changePage("landing");
+      await AsyncStorage.setItem(name, JSON.stringify(rest));
+      context.addOption(name, JSON.stringify(rest));
+      context.changePage();
     } catch (error) {
       // saving error
       console.log(error.message);
@@ -66,12 +72,65 @@ export default function DiceSet() {
     setFormikInitVals(setFieldsMap());
   };
 
+  const deleteDice = async dice => {
+    try {
+      await AsyncStorage.removeItem(dice);
+      context.deleteOption(dice);
+      context.changePage();
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
   return (
-    <Formik onSubmit={vals => handleSave(vals)} initialValues={formikInitVals}>
-      {({ handleChange, handleSubmit, setFieldValue, values }) => (
+    <Formik
+      onSubmit={vals => handleSave(vals)}
+      initialValues={formikInitVals}
+      validationSchema={Yup.object({
+        name: Yup.string().required("name required"),
+      })}
+    >
+      {({
+        handleChange,
+        handleSubmit,
+        setFieldValue,
+        handleBlur,
+        values,
+        touched,
+        errors,
+      }) => (
         <View>
-          <View style={{ marginTop: "10%", width: windowWidth * 0.8 }}>
-            <Input placeholder="Name" />
+          <View
+            style={{
+              justifyContent: "space-between",
+              flexDirection: "row",
+              marginTop: "10%",
+              width: windowWidth * 0.8,
+            }}
+          >
+            <Input
+              editable={!dropdownPick || dropdownPick === "new"}
+              placeholder="Name"
+              onChangeText={handleChange("name")}
+              value={values.name}
+              errorMessage={touched.name && errors.name}
+              errorStyle={{
+                fontSize: 14,
+              }}
+              onBlur={handleBlur("name")}
+              containerStyle={
+                dropdownPick !== "new" && dropdownPick
+                  ? { width: windowWidth * 0.5 }
+                  : null
+              }
+            />
+            {dropdownPick && dropdownPick !== "new" && (
+              <Button
+                buttonStyle={{ backgroundColor: "red" }}
+                title="Delete dice"
+                onPress={() => deleteDice(dropdownPick)}
+              />
+            )}
           </View>
           <ScrollView
             persistentScrollbar={true}
@@ -81,7 +140,7 @@ export default function DiceSet() {
               {fields.map((field, index) => {
                 return (
                   <Input
-                    key={field}
+                    key={index}
                     placeholder="Option"
                     onChangeText={handleChange(index.toString())}
                     value={values[index.toString()]}

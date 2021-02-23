@@ -5,6 +5,7 @@ import globalStyles from "../globalStyles";
 import AsyncStorage from "@react-native-community/async-storage";
 import { Context } from "../context/Provider";
 import DropDownPicker from "react-native-dropdown-picker";
+import Dice from "./Dice";
 
 export default function LandingPage() {
   const {
@@ -16,9 +17,9 @@ export default function LandingPage() {
   } = globalStyles;
   const context = useContext(Context);
   const [randValue, setRandValue] = useState();
-  const [dropdownPick, setDropdownPick] = useState();
+  const [rgb, setRgb] = useState([255, 0, 0]);
   const { options } = context.state;
-  const dropDownRef = React.useRef();
+  const dropDownRef = useRef();
 
   useEffect(() => {
     getOptionValues();
@@ -26,8 +27,10 @@ export default function LandingPage() {
 
   const getOptionValues = async () => {
     try {
-      const jsonValue = await AsyncStorage.getItem("@options");
-      context.setOptions(jsonValue);
+      // const jsonValue = await AsyncStorage.getItem("@options");
+      const keys = await AsyncStorage.getAllKeys();
+      const result = await AsyncStorage.multiGet(keys);
+      context.setOptions(result);
     } catch (error) {
       // error reading value
       console.log(error.message);
@@ -35,10 +38,25 @@ export default function LandingPage() {
   };
 
   const handleRoll = () => {
-    let values = Object.values(JSON.parse(options));
-    let max = values.length;
-    let rand = Math.floor(Math.random() * max);
-    setRandValue(values[rand]);
+    getRandomColor();
+    const { dropdownPick } = context.state;
+    if (dropdownPick && context.state.options[dropdownPick]) {
+      const option = context.state.options[dropdownPick];
+      // console.log(option);
+      // console.log(context.state.options[dropdownPick]);
+      let values = Object.values(JSON.parse(option));
+      let max = values.length;
+      let rand = Math.floor(Math.random() * max);
+      setRandValue(values[rand]);
+    }
+  };
+
+  const getRandomColor = () => {
+    const color = [255, 0, 0];
+    color[0] = Math.round(Math.random() * 255);
+    color[1] = Math.round(Math.random() * 255);
+    color[2] = Math.round(Math.random() * 255);
+    setRgb(color);
   };
 
   return (
@@ -48,29 +66,27 @@ export default function LandingPage() {
       }}
     >
       <View style={{ width: windowWidth, height: windowHeight * 0.9 }}>
+        <Dice rgb={rgb} randValue={randValue} />
         <View style={landingContainer}>
-          <Text h1>{randValue || " "}</Text>
           <View style={{ width: buttonsStyle.width }}>
             <DropDownPicker
+              defaultValue={context.state.dropdownPick}
               placeholder="Choose dice"
               items={[
                 {
-                  label: "USA",
-                  value: "usa",
-                  icon: () => <Icon name="flag" size={18} color="#900" />,
-                  hidden: true,
+                  label: "New Dice",
+                  value: "new",
+                  textStyle: { color: "blue" },
                 },
-                {
-                  label: "UK",
-                  value: "uk",
-                  icon: () => <Icon name="flag" size={18} color="#900" />,
-                },
-                {
-                  label: "France",
-                  value: "france",
-                  icon: () => <Icon name="flag" size={18} color="#900" />,
-                },
-              ]}
+              ].concat(
+                Object.keys(context.state.options).map(option => {
+                  return {
+                    label: option,
+                    value: option,
+                  };
+                })
+              )}
+              dropDownMaxHeight={windowHeight * 0.22}
               containerStyle={{ height: 50 }}
               placeholderStyle={{ fontSize: 20 }}
               style={{ backgroundColor: "#fafafa" }}
@@ -79,7 +95,7 @@ export default function LandingPage() {
               }}
               dropDownStyle={{ backgroundColor: "#fafafa" }}
               labelStyle={{ fontSize: 20 }}
-              onChangeItem={item => setDropdownPick(item.value)}
+              onChangeItem={item => context.setDropdownPick(item.value)}
               controller={instance => (dropDownRef.current = instance)}
             />
 
@@ -89,13 +105,22 @@ export default function LandingPage() {
               titleStyle={buttonsTitle}
               title="Roll the dice"
               onPress={() => handleRoll()}
-              disabled={!(options && Object.keys(options).length)}
+              disabled={
+                !(options && Object.keys(options).length) ||
+                !context.state.dropdownPick ||
+                context.state.dropdownPick === "new"
+              }
             />
             <Text />
             <Button
               buttonStyle={buttonsStyle}
               titleStyle={buttonsTitle}
-              title="Set the dice"
+              title={
+                context.state.dropdownPick === "new" ||
+                !context.state.dropdownPick
+                  ? "Add new Dice"
+                  : "Edit the dice"
+              }
               onPress={() => {
                 context.changePage("diceSet");
               }}

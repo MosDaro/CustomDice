@@ -9,6 +9,9 @@ import DiceSet from "./src/components/DiceSet";
 
 class App extends Component {
   static contextType = Context;
+  state = {
+    loading: false,
+  };
 
   render() {
     const { appContainer } = globalStyles;
@@ -16,7 +19,7 @@ class App extends Component {
     const currentPage = () => {
       switch (this.context.state.page) {
         case "diceSet":
-          return <DiceSet />;
+          return <DiceSet dropdownPick={this.context.state.dropdownPick} />;
         default:
           return <LandingPage />;
       }
