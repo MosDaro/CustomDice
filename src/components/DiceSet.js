@@ -99,7 +99,7 @@ export default function DiceSet(props) {
         touched,
         errors,
       }) => (
-        <View>
+        <View style={{ marginBottom: "5%" }}>
           <View
             style={{
               justifyContent: "space-between",

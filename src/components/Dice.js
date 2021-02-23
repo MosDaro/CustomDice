@@ -35,21 +35,19 @@ export default function Dice(props) {
   const textColour = brightness > 125 ? "black" : "white";
 
   return (
-    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <View
-        style={{
-          backgroundColor: "rgb(" + rgb[0] + "," + rgb[1] + "," + rgb[2] + ")",
-          width: windowWidth * 0.8,
-          height: windowWidth * 0.8,
-          borderRadius: 20,
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <Text style={{ color: textColour, padding: 1 }} h1>
-          {props.randValue || " "}
-        </Text>
-      </View>
+    <View
+      style={{
+        backgroundColor: "rgb(" + rgb[0] + "," + rgb[1] + "," + rgb[2] + ")",
+        width: windowWidth * 0.8,
+        height: windowWidth * 0.8,
+        borderRadius: 20,
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      <Text style={{ color: textColour, padding: 1 }} h1>
+        {props.randValue || " "}
+      </Text>
     </View>
   );
 }

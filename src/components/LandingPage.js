@@ -1,5 +1,5 @@
 import React, { useEffect, useContext, useState, useRef } from "react";
-import { View, TouchableWithoutFeedback } from "react-native";
+import { View, TouchableWithoutFeedback, TouchableOpacity } from "react-native";
 import { Button, Text, Icon } from "react-native-elements";
 import globalStyles from "../globalStyles";
 import AsyncStorage from "@react-native-community/async-storage";
@@ -66,7 +66,17 @@ export default function LandingPage() {
       }}
     >
       <View style={{ width: windowWidth, height: windowHeight * 0.9 }}>
-        <Dice rgb={rgb} randValue={randValue} />
+        <TouchableOpacity
+          style={{
+            flex: 1,
+            alignItems: "center",
+            justifyContent: "center",
+            marginTop: "5%",
+          }}
+          onPress={() => handleRoll()}
+        >
+          <Dice rgb={rgb} randValue={randValue} />
+        </TouchableOpacity>
         <View style={landingContainer}>
           <View style={{ width: buttonsStyle.width }}>
             <DropDownPicker

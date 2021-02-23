@@ -26,6 +26,7 @@ function globalStyles() {
       flex: 1,
       alignItems: "center",
       justifyContent: "flex-end",
+      marginBottom: "5%",
     },
   });
 
